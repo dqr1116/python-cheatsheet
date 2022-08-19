@@ -94,6 +94,64 @@ value = <dict>.pop(key)                         # Removes item or raises KeyErro
 {k: v for k, v in <dict>.items() if k in keys}  # Returns a dictionary, filtered by keys.
 ```
 
+```python
+def nested_dict_set(dic, keys, value):
+    """ 给一个嵌套dict 赋值
+
+    Examples:
+        nested_set(result, ['compute_component', 'nurss_service', 'resources_requests'], value_1)
+    Args:
+        dic: some dict
+        keys: key chain,
+        value: value
+
+    Returns:
+        None
+    """
+    for key in keys[:-1]:
+        dic = dic.setdefault(key, {})
+    dic[keys[-1]] = value
+
+
+def nested_dict_get(dic, keys):
+    """ 获取嵌套dict的某一个value， keys是从最外层串起来的key。 没有key会返回None
+
+    eg: nested_get(some_dict, ['compute_component', 'nurss_service', 'resources_requests'])
+    """
+    for key in keys:
+        dic = dic.get(key)
+        if not dic:
+            return None
+
+    return dic
+    
+
+def update_dict_value(origin_dict, new_dict, skip_empty_value=True, in_place=True) -> dict:
+    """ dict更新，支持多层级.
+
+    Args:
+        origin_dict: origin_dict
+        new_dict: new_dict
+        skip_empty_value: 如果value是空，就skip
+        in_place: 只修改老的值，不增加新的。
+
+    Returns:
+        changed_origin_dict
+    """
+    for k, v in new_dict.items():
+        if skip_empty_value and not v:
+            continue
+        if in_place and k not in origin_dict.keys():
+            continue
+        if isinstance(v, dict):
+            origin_dict[k] = update_dict_value(origin_dict.get(k, {}), v)
+        else:
+            origin_dict[k] = v
+    return origin_dict
+```
+
+
+
 ### Counter
 ```python
 >>> from collections import Counter
