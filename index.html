@@ -54,7 +54,7 @@
 
 <body>
   <header>
-    <aside>September 12, 2022</aside>
+    <aside>September 19, 2022</aside>
     <a href="https://gto76.github.io" rel="author">Jure Šorn</a>
   </header>
 
@@ -1557,19 +1557,16 @@ CompletedProcess(args=[<span class="hljs-string">'bc'</span>, <span class="hljs-
         writer.writerows(rows)
 </code></pre></div>
 
-<div><h2 id="sqlite"><a href="#sqlite" name="sqlite">#</a>SQLite</h2><p><strong>A server-less database engine that stores each database into a separate file.</strong></p><div><h3 id="connect">Connect</h3><p><strong>Opens a connection to the database file. Creates a new file if path doesn't exist.</strong></p><pre><code class="python language-python hljs"><span class="hljs-keyword">import</span> sqlite3
-&lt;conn&gt; = sqlite3.connect(&lt;path&gt;)                <span class="hljs-comment"># Also ':memory:'.</span>
+<div><h2 id="sqlite"><a href="#sqlite" name="sqlite">#</a>SQLite</h2><p><strong>A server-less database engine that stores each database into a separate file.</strong></p><pre><code class="python language-python hljs"><span class="hljs-keyword">import</span> sqlite3
+&lt;conn&gt; = sqlite3.connect(&lt;path&gt;)                <span class="hljs-comment"># Opens existing or new file. Also ':memory:'.</span>
 &lt;conn&gt;.close()                                  <span class="hljs-comment"># Closes the connection.</span>
-</code></pre></div></div>
+</code></pre></div>
 
 
-
-
-<div><h3 id="read-1">Read</h3><p><strong>Returned values can be of type str, int, float, bytes or None.</strong></p><pre><code class="python language-python hljs">&lt;cursor&gt; = &lt;conn&gt;.execute(<span class="hljs-string">'&lt;query&gt;'</span>)            <span class="hljs-comment"># Can raise a subclass of sqlite3.Error.</span>
+<div><h3 id="read-1">Read</h3><pre><code class="python language-python hljs">&lt;cursor&gt; = &lt;conn&gt;.execute(<span class="hljs-string">'&lt;query&gt;'</span>)            <span class="hljs-comment"># Can raise a subclass of sqlite3.Error.</span>
 &lt;tuple&gt;  = &lt;cursor&gt;.fetchone()                  <span class="hljs-comment"># Returns next row. Also next(&lt;cursor&gt;).</span>
 &lt;list&gt;   = &lt;cursor&gt;.fetchall()                  <span class="hljs-comment"># Returns remaining rows. Also list(&lt;cursor&gt;).</span>
 </code></pre></div>
-
 
 <div><h3 id="write-1">Write</h3><pre><code class="python language-python hljs">&lt;conn&gt;.execute(<span class="hljs-string">'&lt;query&gt;'</span>)                       <span class="hljs-comment"># Can raise a subclass of sqlite3.Error.</span>
 &lt;conn&gt;.commit()                                 <span class="hljs-comment"># Saves all changes since the last commit.</span>
@@ -1580,15 +1577,15 @@ CompletedProcess(args=[<span class="hljs-string">'bc'</span>, <span class="hljs-
     &lt;conn&gt;.execute(<span class="hljs-string">'&lt;query&gt;'</span>)                   <span class="hljs-comment"># depending on whether any exception occurred.</span>
 </code></pre></div>
 
-<div><h3 id="placeholders">Placeholders</h3><ul>
-<li><strong>Passed values can be of type str, int, float, bytes, None, bool, datetime.date or datetime.datetime.</strong></li>
-<li><strong>Bools will be stored and returned as ints and dates as <a href="#encode">ISO formatted strings</a>.</strong></li>
-</ul><pre><code class="python language-python hljs">&lt;conn&gt;.execute(<span class="hljs-string">'&lt;query&gt;'</span>, &lt;list/tuple&gt;)         <span class="hljs-comment"># Replaces '?'s in query with values.</span>
+<div><h3 id="placeholders">Placeholders</h3><pre><code class="python language-python hljs">&lt;conn&gt;.execute(<span class="hljs-string">'&lt;query&gt;'</span>, &lt;list/tuple&gt;)         <span class="hljs-comment"># Replaces '?'s in query with values.</span>
 &lt;conn&gt;.execute(<span class="hljs-string">'&lt;query&gt;'</span>, &lt;dict/namedtuple&gt;)    <span class="hljs-comment"># Replaces ':&lt;key&gt;'s with values.</span>
 &lt;conn&gt;.executemany(<span class="hljs-string">'&lt;query&gt;'</span>, &lt;coll_of_above&gt;)  <span class="hljs-comment"># Runs execute() multiple times.</span>
 </code></pre></div>
 
-
+<ul>
+<li><strong>Passed values can be of type str, int, float, bytes, None, bool, datetime.date or datetime.datetime.</strong></li>
+<li><strong>Bools will be stored and returned as ints and dates as <a href="#encode">ISO formatted strings</a>.</strong></li>
+</ul>
 <div><h3 id="example">Example</h3><p><strong>Values are not actually saved in this example because <code class="python hljs"><span class="hljs-string">'conn.commit()'</span></code> is omitted!</strong></p><pre><code class="python language-python hljs"><span class="hljs-meta">&gt;&gt;&gt; </span>conn = sqlite3.connect(<span class="hljs-string">'test.db'</span>)
 <span class="hljs-meta">&gt;&gt;&gt; </span>conn.execute(<span class="hljs-string">'CREATE TABLE person (person_id INTEGER PRIMARY KEY, name, height)'</span>)
 <span class="hljs-meta">&gt;&gt;&gt; </span>conn.execute(<span class="hljs-string">'INSERT INTO person VALUES (NULL, ?, ?)'</span>, (<span class="hljs-string">'Jean-Luc'</span>, <span class="hljs-number">187</span>)).lastrowid
@@ -1889,7 +1886,7 @@ ValueError: malformed node or string
 <li><strong>Coroutines have a lot in common with threads, but unlike threads, they only give up control when they call another coroutine and they don’t use as much memory.</strong></li>
 <li><strong>Coroutine definition starts with <code class="python hljs"><span class="hljs-string">'async'</span></code> and its call with <code class="python hljs"><span class="hljs-string">'await'</span></code>.</strong></li>
 <li><strong><code class="python hljs"><span class="hljs-string">'asyncio.run(&lt;coroutine&gt;)'</span></code> is the main entry point for asynchronous programs.</strong></li>
-<li><strong>Functions wait(), gather() and as_completed() can be used when multiple coroutines need to be started at the same time.</strong></li>
+<li><strong>Functions wait(), gather() and as_completed() start multiple coroutines at the same time.</strong></li>
 <li><strong>Asyncio module also provides its own <a href="#queue">Queue</a>, <a href="#semaphoreeventbarrier">Event</a>, <a href="#lock">Lock</a> and <a href="#semaphoreeventbarrier">Semaphore</a> classes.</strong></li>
 </ul><div><h4 id="runsaterminalgamewhereyoucontrolanasteriskthatmustavoidnumbers">Runs a terminal game where you control an asterisk that must avoid numbers:</h4><pre><code class="python language-python hljs"><span class="hljs-keyword">import</span> asyncio, collections, curses, curses.textpad, enum, random
 
@@ -1903,11 +1900,12 @@ W, H = <span class="hljs-number">15</span>, <span class="hljs-number">7</span>  
     asyncio.run(main_coroutine(screen))        <span class="hljs-comment"># Starts running asyncio code.</span>
 
 <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main_coroutine</span><span class="hljs-params">(screen)</span>:</span>
-    state = {<span class="hljs-string">'*'</span>: P(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>), **{id_: P(W//<span class="hljs-number">2</span>, H//<span class="hljs-number">2</span>) <span class="hljs-keyword">for</span> id_ <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>)}}
     moves = asyncio.Queue()
-    coros = (*(random_controller(id_, moves) <span class="hljs-keyword">for</span> id_ <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>)),
-             human_controller(screen, moves), model(moves, state), view(state, screen))
-    <span class="hljs-keyword">await</span> asyncio.wait(coros, return_when=asyncio.FIRST_COMPLETED)
+    state = {<span class="hljs-string">'*'</span>: P(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>), **{id_: P(W//<span class="hljs-number">2</span>, H//<span class="hljs-number">2</span>) <span class="hljs-keyword">for</span> id_ <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>)}}
+    ai    = [random_controller(id_, moves) <span class="hljs-keyword">for</span> id_ <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>)]
+    mvc   = [human_controller(screen, moves), model(moves, state), view(state, screen)]
+    tasks = [asyncio.create_task(cor) <span class="hljs-keyword">for</span> cor <span class="hljs-keyword">in</span> ai + mvc]
+    <span class="hljs-keyword">await</span> asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
 
 <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">random_controller</span><span class="hljs-params">(id_, moves)</span>:</span>
     <span class="hljs-keyword">while</span> <span class="hljs-keyword">True</span>:
@@ -2905,7 +2903,7 @@ $ pyinstaller script.py --add-data '&lt;path&gt;:.'  <span class="hljs-comment">
  
 
   <footer>
-    <aside>September 12, 2022</aside>
+    <aside>September 19, 2022</aside>
     <a href="https://gto76.github.io" rel="author">Jure Šorn</a>
   </footer>
 

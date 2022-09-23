@@ -1928,16 +1928,13 @@ SQLite
 ------
 **A server-less database engine that stores each database into a separate file.**
 
-### Connect
-**Opens a connection to the database file. Creates a new file if path doesn't exist.**
 ```python
 import sqlite3
-<conn> = sqlite3.connect(<path>)                # Also ':memory:'.
+<conn> = sqlite3.connect(<path>)                # Opens existing or new file. Also ':memory:'.
 <conn>.close()                                  # Closes the connection.
 ```
 
 ### Read
-**Returned values can be of type str, int, float, bytes or None.**
 ```python
 <cursor> = <conn>.execute('<query>')            # Can raise a subclass of sqlite3.Error.
 <tuple>  = <cursor>.fetchone()                  # Returns next row. Also next(<cursor>).
@@ -1958,13 +1955,13 @@ with <conn>:                                    # Exits the block with commit() 
 ```
 
 ### Placeholders
-* **Passed values can be of type str, int, float, bytes, None, bool, datetime.date or datetime.datetime.**
-* **Bools will be stored and returned as ints and dates as [ISO formatted strings](#encode).**
 ```python
 <conn>.execute('<query>', <list/tuple>)         # Replaces '?'s in query with values.
 <conn>.execute('<query>', <dict/namedtuple>)    # Replaces ':<key>'s with values.
 <conn>.executemany('<query>', <coll_of_above>)  # Runs execute() multiple times.
 ```
+* **Passed values can be of type str, int, float, bytes, None, bool, datetime.date or datetime.datetime.**
+* **Bools will be stored and returned as ints and dates as [ISO formatted strings](#encode).**
 
 ### Example
 **Values are not actually saved in this example because `'conn.commit()'` is omitted!**
@@ -2362,7 +2359,7 @@ Coroutines
 * **Coroutines have a lot in common with threads, but unlike threads, they only give up control when they call another coroutine and they don’t use as much memory.**
 * **Coroutine definition starts with `'async'` and its call with `'await'`.**
 * **`'asyncio.run(<coroutine>)'` is the main entry point for asynchronous programs.**
-* **Functions wait(), gather() and as_completed() can be used when multiple coroutines need to be started at the same time.**
+* **Functions wait(), gather() and as_completed() start multiple coroutines at the same time.**
 * **Asyncio module also provides its own [Queue](#queue), [Event](#semaphore-event-barrier), [Lock](#lock) and [Semaphore](#semaphore-event-barrier) classes.**
 
 #### Runs a terminal game where you control an asterisk that must avoid numbers:
@@ -2380,11 +2377,12 @@ def main(screen):
     asyncio.run(main_coroutine(screen))        # Starts running asyncio code.
 
 async def main_coroutine(screen):
-    state = {'*': P(0, 0), **{id_: P(W//2, H//2) for id_ in range(10)}}
     moves = asyncio.Queue()
-    coros = (*(random_controller(id_, moves) for id_ in range(10)),
-             human_controller(screen, moves), model(moves, state), view(state, screen))
-    await asyncio.wait(coros, return_when=asyncio.FIRST_COMPLETED)
+    state = {'*': P(0, 0), **{id_: P(W//2, H//2) for id_ in range(10)}}
+    ai    = [random_controller(id_, moves) for id_ in range(10)]
+    mvc   = [human_controller(screen, moves), model(moves, state), view(state, screen)]
+    tasks = [asyncio.create_task(cor) for cor in ai + mvc]
+    await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
 
 async def random_controller(id_, moves):
     while True:
