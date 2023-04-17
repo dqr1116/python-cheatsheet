@@ -54,7 +54,7 @@
 
 <body>
   <header>
-    <aside>April 11, 2023</aside>
+    <aside>April 13, 2023</aside>
     <a href="https://gto76.github.io" rel="author">Jure Šorn</a>
   </header>
 
@@ -886,9 +886,9 @@ Z = dataclasses.make_dataclass(<span class="hljs-string">'Z'</span>, [<span clas
 
 <span class="hljs-meta">@dataclass(order=False, frozen=False)</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> &lt;<span class="hljs-title">class_name</span>&gt;:</span>
-    &lt;attr_name_1&gt;: &lt;type&gt;
-    &lt;attr_name_2&gt;: &lt;type&gt; = &lt;default_value&gt;
-    &lt;attr_name_3&gt;: list/dict/set = field(default_factory=list/dict/set)
+    &lt;attr_name&gt;: &lt;type&gt;
+    &lt;attr_name&gt;: &lt;type&gt; = &lt;default_value&gt;
+    &lt;attr_name&gt;: list/dict/set = field(default_factory=list/dict/set)
 </code></pre></div>
 
 
@@ -1382,41 +1382,40 @@ value = args.&lt;name&gt;
         file.write(text)
 </code></pre></div>
 
-<div><h2 id="paths"><a href="#paths" name="paths">#</a>Paths</h2><pre><code class="python language-python hljs"><span class="hljs-keyword">from</span> os <span class="hljs-keyword">import</span> getcwd, path, listdir, scandir
-<span class="hljs-keyword">from</span> glob <span class="hljs-keyword">import</span> glob
+<div><h2 id="paths"><a href="#paths" name="paths">#</a>Paths</h2><pre><code class="python language-python hljs"><span class="hljs-keyword">import</span> os, glob
+<span class="hljs-keyword">from</span> pathlib <span class="hljs-keyword">import</span> Path
 </code></pre></div>
 
-<pre><code class="python language-python hljs">&lt;str&gt;  = getcwd()                   <span class="hljs-comment"># Returns the current working directory.</span>
-&lt;str&gt;  = path.join(&lt;path&gt;, ...)     <span class="hljs-comment"># Joins two or more pathname components.</span>
-&lt;str&gt;  = path.abspath(&lt;path&gt;)       <span class="hljs-comment"># Returns absolute path.</span>
+<pre><code class="python language-python hljs">&lt;str&gt;  = os.getcwd()                <span class="hljs-comment"># Returns the current working directory.</span>
+&lt;str&gt;  = os.path.join(&lt;path&gt;, ...)  <span class="hljs-comment"># Joins two or more pathname components.</span>
+&lt;str&gt;  = os.path.realpath(&lt;path&gt;)   <span class="hljs-comment"># Resolves symlinks and calls path.abspath().</span>
 </code></pre>
-<pre><code class="python language-python hljs">&lt;str&gt;  = path.basename(&lt;path&gt;)      <span class="hljs-comment"># Returns final component of the path.</span>
-&lt;str&gt;  = path.dirname(&lt;path&gt;)       <span class="hljs-comment"># Returns path without the final component.</span>
-&lt;tup.&gt; = path.splitext(&lt;path&gt;)      <span class="hljs-comment"># Splits on last period of the final component.</span>
+<pre><code class="python language-python hljs">&lt;str&gt;  = os.path.basename(&lt;path&gt;)   <span class="hljs-comment"># Returns final component of the path.</span>
+&lt;str&gt;  = os.path.dirname(&lt;path&gt;)    <span class="hljs-comment"># Returns path without the final component.</span>
+&lt;tup.&gt; = os.path.splitext(&lt;path&gt;)   <span class="hljs-comment"># Splits on last period of the final component.</span>
 </code></pre>
-<pre><code class="python language-python hljs">&lt;list&gt; = listdir(path=<span class="hljs-string">'.'</span>)          <span class="hljs-comment"># Returns filenames located at the path.</span>
-&lt;list&gt; = glob(<span class="hljs-string">'&lt;pattern&gt;'</span>)          <span class="hljs-comment"># Returns paths matching the wildcard pattern.</span>
+<pre><code class="python language-python hljs">&lt;list&gt; = os.listdir(path=<span class="hljs-string">'.'</span>)       <span class="hljs-comment"># Returns filenames located at the path.</span>
+&lt;list&gt; = glob.glob(<span class="hljs-string">'&lt;pattern&gt;'</span>)     <span class="hljs-comment"># Returns paths matching the wildcard pattern.</span>
 </code></pre>
-<pre><code class="python language-python hljs">&lt;bool&gt; = path.exists(&lt;path&gt;)        <span class="hljs-comment"># Or: &lt;Path&gt;.exists()</span>
-&lt;bool&gt; = path.isfile(&lt;path&gt;)        <span class="hljs-comment"># Or: &lt;DirEntry/Path&gt;.is_file()</span>
-&lt;bool&gt; = path.isdir(&lt;path&gt;)         <span class="hljs-comment"># Or: &lt;DirEntry/Path&gt;.is_dir()</span>
+<pre><code class="python language-python hljs">&lt;bool&gt; = os.path.exists(&lt;path&gt;)     <span class="hljs-comment"># Or: &lt;Path&gt;.exists()</span>
+&lt;bool&gt; = os.path.isfile(&lt;path&gt;)     <span class="hljs-comment"># Or: &lt;DirEntry/Path&gt;.is_file()</span>
+&lt;bool&gt; = os.path.isdir(&lt;path&gt;)      <span class="hljs-comment"># Or: &lt;DirEntry/Path&gt;.is_dir()</span>
 </code></pre>
 <pre><code class="python language-python hljs">&lt;stat&gt; = os.stat(&lt;path&gt;)            <span class="hljs-comment"># Or: &lt;DirEntry/Path&gt;.stat()</span>
 &lt;real&gt; = &lt;stat&gt;.st_mtime/st_size/…  <span class="hljs-comment"># Modification time, size in bytes, ...</span>
 </code></pre>
-<div><h3 id="direntry">DirEntry</h3><p><strong>Unlike listdir(), scandir() returns DirEntry objects that cache isfile, isdir and on Windows also stat information, thus significantly increasing the performance of code that requires it.</strong></p><pre><code class="python language-python hljs">&lt;iter&gt; = scandir(path=<span class="hljs-string">'.'</span>)          <span class="hljs-comment"># Returns DirEntry objects located at the path.</span>
+<div><h3 id="direntry">DirEntry</h3><p><strong>Unlike listdir(), scandir() returns DirEntry objects that cache isfile, isdir and on Windows also stat information, thus significantly increasing the performance of code that requires it.</strong></p><pre><code class="python language-python hljs">&lt;iter&gt; = os.scandir(path=<span class="hljs-string">'.'</span>)       <span class="hljs-comment"># Returns DirEntry objects located at the path.</span>
 &lt;str&gt;  = &lt;DirEntry&gt;.path            <span class="hljs-comment"># Returns the whole path as a string.</span>
 &lt;str&gt;  = &lt;DirEntry&gt;.name            <span class="hljs-comment"># Returns final component as a string.</span>
 &lt;file&gt; = open(&lt;DirEntry&gt;)           <span class="hljs-comment"># Opens the file and returns a file object.</span>
 </code></pre></div>
 
 
-<div><h3 id="pathobject">Path Object</h3><pre><code class="python language-python hljs"><span class="hljs-keyword">from</span> pathlib <span class="hljs-keyword">import</span> Path
+<div><h3 id="pathobject">Path Object</h3><pre><code class="python language-python hljs">&lt;Path&gt; = Path(&lt;path&gt; [, ...])       <span class="hljs-comment"># Accepts strings, Paths and DirEntry objects.</span>
+&lt;Path&gt; = &lt;path&gt; / &lt;path&gt; [/ ...]    <span class="hljs-comment"># First or second path must be a Path object.</span>
+&lt;Path&gt; = &lt;Path&gt;.resolve()           <span class="hljs-comment"># Resolves symlinks and calls &lt;Path&gt;.absolute().</span>
 </code></pre></div>
 
-<pre><code class="python language-python hljs">&lt;Path&gt; = Path(&lt;path&gt; [, ...])       <span class="hljs-comment"># Accepts strings, Paths and DirEntry objects.</span>
-&lt;Path&gt; = &lt;path&gt; / &lt;path&gt; [/ ...]    <span class="hljs-comment"># First or second path must be a Path object.</span>
-</code></pre>
 <pre><code class="python language-python hljs">&lt;Path&gt; = Path()                     <span class="hljs-comment"># Returns relative cwd. Also Path('.').</span>
 &lt;Path&gt; = Path.cwd()                 <span class="hljs-comment"># Returns absolute cwd. Also Path().resolve().</span>
 &lt;Path&gt; = Path.home()                <span class="hljs-comment"># Returns user's home directory (absolute).</span>
@@ -1442,10 +1441,12 @@ os.mkdir(&lt;path&gt;, mode=<span class="hljs-number">0o777</span>)        <span
 os.makedirs(&lt;path&gt;, mode=<span class="hljs-number">0o777</span>)     <span class="hljs-comment"># Creates all path's dirs. Also `exist_ok=False`.</span>
 </code></pre>
 <pre><code class="python language-python hljs">shutil.copy(from, to)               <span class="hljs-comment"># Copies the file. 'to' can exist or be a dir.</span>
+shutil.copy2(from, to)              <span class="hljs-comment"># Also copies creation and modification time.</span>
 shutil.copytree(from, to)           <span class="hljs-comment"># Copies the directory. 'to' must not exist.</span>
 </code></pre>
 <pre><code class="python language-python hljs">os.rename(from, to)                 <span class="hljs-comment"># Renames/moves the file or directory.</span>
-os.replace(from, to)                <span class="hljs-comment"># Same, but overwrites 'to' if it exists.</span>
+os.replace(from, to)                <span class="hljs-comment"># Same, but overwrites file 'to' even on Windows.</span>
+shutil.move(from, to)               <span class="hljs-comment"># Rename() that moves into 'to' if it's a dir.</span>
 </code></pre>
 <pre><code class="python language-python hljs">os.remove(&lt;path&gt;)                   <span class="hljs-comment"># Deletes the file.</span>
 os.rmdir(&lt;path&gt;)                    <span class="hljs-comment"># Deletes the empty directory.</span>
@@ -2098,7 +2099,7 @@ app.run(host=<span class="hljs-keyword">None</span>, debug=<span class="hljs-key
 
 <ul>
 <li><strong>To return an error code use <code class="python hljs"><span class="hljs-string">'abort(&lt;int&gt;)'</span></code> and to redirect use <code class="python hljs"><span class="hljs-string">'redirect(&lt;url&gt;)'</span></code>.</strong></li>
-<li><strong><code class="python hljs"><span class="hljs-string">'request.args[&lt;str&gt;]'</span></code> returns parameter from the query string (URL part after the ?).</strong></li>
+<li><strong><code class="python hljs"><span class="hljs-string">'request.args[&lt;str&gt;]'</span></code> returns parameter from the query string (URL part after '?').</strong></li>
 <li><strong>Use <code class="python hljs"><span class="hljs-string">'session[key] = value'</span></code> to store session data like username, etc.</strong></li>
 </ul>
 <div><h3 id="restrequest">REST Request</h3><pre><code class="python language-python hljs"><span class="hljs-meta">@app.post('/&lt;sport&gt;/odds')</span>
@@ -2262,7 +2263,7 @@ right = [[<span class="hljs-number">0.1</span>,  <span class="hljs-number">0.6</
 </code></pre>
 <pre><code class="python language-python hljs">&lt;int/tuple&gt; = &lt;Image&gt;.getpixel((x, y))          <span class="hljs-comment"># Returns a pixel.</span>
 &lt;Image&gt;.putpixel((x, y), &lt;int/tuple&gt;)           <span class="hljs-comment"># Writes a pixel to the image.</span>
-&lt;ImagingCore&gt; = &lt;Image&gt;.getdata()               <span class="hljs-comment"># Returns a flattened sequence of pixels.</span>
+&lt;ImagingCore&gt; = &lt;Image&gt;.getdata()               <span class="hljs-comment"># Returns a flattened view of the pixels.</span>
 &lt;Image&gt;.putdata(&lt;list/ImagingCore&gt;)             <span class="hljs-comment"># Writes a flattened sequence of pixels.</span>
 &lt;Image&gt;.paste(&lt;Image&gt;, (x, y))                  <span class="hljs-comment"># Writes passed image to the image.</span>
 </code></pre>
@@ -2876,7 +2877,7 @@ print(<span class="hljs-string">f'Hello <span class="hljs-subst">{values[<span c
 <li><strong>All <code class="python hljs"><span class="hljs-string">'cdef'</span></code> definitions are optional, but they contribute to the speed-up.</strong></li>
 <li><strong>Script needs to be saved with a <code class="python hljs"><span class="hljs-string">'pyx'</span></code> extension.</strong></li>
 </ul><pre><code class="python language-python hljs">cdef &lt;ctype&gt; &lt;var_name&gt; = &lt;el&gt;
-cdef &lt;ctype&gt;[n_elements] &lt;var_name&gt; = [&lt;el_1&gt;, &lt;el_2&gt;, ...]
+cdef &lt;ctype&gt;[n_elements] &lt;var_name&gt; = [&lt;el&gt;, &lt;el&gt;, ...]
 cdef &lt;ctype/void&gt; &lt;func_name&gt;(&lt;ctype&gt; &lt;arg_name&gt;): ...
 </code></pre></div>
 
@@ -2886,7 +2887,7 @@ cdef &lt;ctype/void&gt; &lt;func_name&gt;(&lt;ctype&gt; &lt;arg_name&gt;): ...
     <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self, &lt;ctype&gt; &lt;arg_name&gt;)</span>:</span>
         self.&lt;attr_name&gt; = &lt;arg_name&gt;
 </code></pre>
-<pre><code class="python language-python hljs">cdef enum &lt;enum_name&gt;: &lt;member_name_1&gt;, &lt;member_name_2&gt;, ...
+<pre><code class="python language-python hljs">cdef enum &lt;enum_name&gt;: &lt;member_name&gt;, &lt;member_name&gt;, ...
 </code></pre>
 <div><h3 id="pyinstaller">PyInstaller</h3><pre><code class="bash language-bash hljs">$ pip3 install pyinstaller
 $ pyinstaller script.py                        <span class="hljs-comment"># Compiles into './dist/script' directory.</span>
@@ -2934,7 +2935,7 @@ $ pyinstaller script.py --add-data '&lt;path&gt;:.'  <span class="hljs-comment">
  
 
   <footer>
-    <aside>April 11, 2023</aside>
+    <aside>April 13, 2023</aside>
     <a href="https://gto76.github.io" rel="author">Jure Šorn</a>
   </footer>
 

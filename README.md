@@ -1109,9 +1109,9 @@ from dataclasses import dataclass, field
 
 @dataclass(order=False, frozen=False)
 class <class_name>:
-    <attr_name_1>: <type>
-    <attr_name_2>: <type> = <default_value>
-    <attr_name_3>: list/dict/set = field(default_factory=list/dict/set)
+    <attr_name>: <type>
+    <attr_name>: <type> = <default_value>
+    <attr_name>: list/dict/set = field(default_factory=list/dict/set)
 ```
 * **Objects can be made [sortable](#sortable) with `'order=True'` and immutable with `'frozen=True'`.**
 * **For object to be [hashable](#hashable), all attributes must be hashable and 'frozen' must be True.**
@@ -1685,31 +1685,31 @@ def write_to_file(filename, text):
 Paths
 -----
 ```python
-from os import getcwd, path, listdir, scandir
-from glob import glob
+import os, glob
+from pathlib import Path
 ```
 
 ```python
-<str>  = getcwd()                   # Returns the current working directory.
-<str>  = path.join(<path>, ...)     # Joins two or more pathname components.
-<str>  = path.abspath(<path>)       # Returns absolute path.
+<str>  = os.getcwd()                # Returns the current working directory.
+<str>  = os.path.join(<path>, ...)  # Joins two or more pathname components.
+<str>  = os.path.realpath(<path>)   # Resolves symlinks and calls path.abspath().
 ```
 
 ```python
-<str>  = path.basename(<path>)      # Returns final component of the path.
-<str>  = path.dirname(<path>)       # Returns path without the final component.
-<tup.> = path.splitext(<path>)      # Splits on last period of the final component.
+<str>  = os.path.basename(<path>)   # Returns final component of the path.
+<str>  = os.path.dirname(<path>)    # Returns path without the final component.
+<tup.> = os.path.splitext(<path>)   # Splits on last period of the final component.
 ```
 
 ```python
-<list> = listdir(path='.')          # Returns filenames located at the path.
-<list> = glob('<pattern>')          # Returns paths matching the wildcard pattern.
+<list> = os.listdir(path='.')       # Returns filenames located at the path.
+<list> = glob.glob('<pattern>')     # Returns paths matching the wildcard pattern.
 ```
 
 ```python
-<bool> = path.exists(<path>)        # Or: <Path>.exists()
-<bool> = path.isfile(<path>)        # Or: <DirEntry/Path>.is_file()
-<bool> = path.isdir(<path>)         # Or: <DirEntry/Path>.is_dir()
+<bool> = os.path.exists(<path>)     # Or: <Path>.exists()
+<bool> = os.path.isfile(<path>)     # Or: <DirEntry/Path>.is_file()
+<bool> = os.path.isdir(<path>)      # Or: <DirEntry/Path>.is_dir()
 ```
 
 ```python
@@ -1721,7 +1721,7 @@ from glob import glob
 **Unlike listdir(), scandir() returns DirEntry objects that cache isfile, isdir and on Windows also stat information, thus significantly increasing the performance of code that requires it.**
 
 ```python
-<iter> = scandir(path='.')          # Returns DirEntry objects located at the path.
+<iter> = os.scandir(path='.')       # Returns DirEntry objects located at the path.
 <str>  = <DirEntry>.path            # Returns the whole path as a string.
 <str>  = <DirEntry>.name            # Returns final component as a string.
 <file> = open(<DirEntry>)           # Opens the file and returns a file object.
@@ -1729,12 +1729,9 @@ from glob import glob
 
 ### Path Object
 ```python
-from pathlib import Path
-```
-
-```python
 <Path> = Path(<path> [, ...])       # Accepts strings, Paths and DirEntry objects.
 <Path> = <path> / <path> [/ ...]    # First or second path must be a Path object.
+<Path> = <Path>.resolve()           # Resolves symlinks and calls <Path>.absolute().
 ```
 
 ```python
@@ -1777,12 +1774,14 @@ os.makedirs(<path>, mode=0o777)     # Creates all path's dirs. Also `exist_ok=Fa
 
 ```python
 shutil.copy(from, to)               # Copies the file. 'to' can exist or be a dir.
+shutil.copy2(from, to)              # Also copies creation and modification time.
 shutil.copytree(from, to)           # Copies the directory. 'to' must not exist.
 ```
 
 ```python
 os.rename(from, to)                 # Renames/moves the file or directory.
-os.replace(from, to)                # Same, but overwrites 'to' if it exists.
+os.replace(from, to)                # Same, but overwrites file 'to' even on Windows.
+shutil.move(from, to)               # Rename() that moves into 'to' if it's a dir.
 ```
 
 ```python
@@ -2619,7 +2618,7 @@ def serve_html(sport):
     return render_template_string('<h1>{{title}}</h1>', title=sport)
 ```
 * **To return an error code use `'abort(<int>)'` and to redirect use `'redirect(<url>)'`.**
-* **`'request.args[<str>]'` returns parameter from the query string (URL part after the ?).**
+* **`'request.args[<str>]'` returns parameter from the query string (URL part after '?').**
 * **Use `'session[key] = value'` to store session data like username, etc.**
 
 ### REST Request
@@ -2832,7 +2831,7 @@ from PIL import Image, ImageDraw
 ```python
 <int/tuple> = <Image>.getpixel((x, y))          # Returns a pixel.
 <Image>.putpixel((x, y), <int/tuple>)           # Writes a pixel to the image.
-<ImagingCore> = <Image>.getdata()               # Returns a flattened sequence of pixels.
+<ImagingCore> = <Image>.getdata()               # Returns a flattened view of the pixels.
 <Image>.putdata(<list/ImagingCore>)             # Writes a flattened sequence of pixels.
 <Image>.paste(<Image>, (x, y))                  # Writes passed image to the image.
 ```
@@ -3591,7 +3590,7 @@ import <cython_script>
 
 ```python
 cdef <ctype> <var_name> = <el>
-cdef <ctype>[n_elements] <var_name> = [<el_1>, <el_2>, ...]
+cdef <ctype>[n_elements] <var_name> = [<el>, <el>, ...]
 cdef <ctype/void> <func_name>(<ctype> <arg_name>): ...
 ```
 
@@ -3603,7 +3602,7 @@ cdef class <class_name>:
 ```
 
 ```python
-cdef enum <enum_name>: <member_name_1>, <member_name_2>, ...
+cdef enum <enum_name>: <member_name>, <member_name>, ...
 ```
 
 ### PyInstaller
